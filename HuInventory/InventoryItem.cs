@@ -11,7 +11,6 @@ namespace HuInventory
 			Dryfoods,
 			Frozenfoods,
 
-
 		}
 		public string Name { get; set; }
 		public Category ItemCategory { get; set; }
@@ -30,5 +29,36 @@ namespace HuInventory
 			ExpDate = expDate;
 
 		}
+
+		public void AddStock(int quantity)
+		{
+
+			if (quantity <= 0)
+			{
+				return;
+			}
+
+			CurrentInv += quantity;
+		}
+
+		public bool RemoveStock(int quantity)
+		{
+			if (quantity <= 0)
+			{
+				return false;
+			}
+
+			if (quantity > CurrentInv)
+			{
+				return false;
+			}
+
+			CurrentInv -= quantity;
+			return true;
+
+		}
+
+
+
 	}
 }
