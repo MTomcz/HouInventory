@@ -14,50 +14,39 @@ namespace HuInventory
 		}
 		public string Name { get; set; }
 		public Category ItemCategory { get; set; }
-		public int Amount { get; set; }
-		public int CurrentInv { get; set; }
 		public int MinInv { get; set; }
-		public DateTime ExpDate { get; set; }
 
-		public InventoryItem(string name, Category category, int amount, int currentInv, int minInv, DateTime expDate)
+		public List<Batch> Batches { get; set; } = new List<Batch>();
+
+
+		public InventoryItem(string name, Category category, int minInv)
 		{
 			Name = name;
 			ItemCategory = category;
-			Amount = amount;
-			CurrentInv = currentInv;
 			MinInv = minInv;
-			ExpDate = expDate;
 
 		}
 
-		public void AddStock(int quantity)
+		public void AddStock(int quantity, DateTime expDate)
 		{
-
 			if (quantity <= 0)
-			{
 				return;
-			}
 
-			CurrentInv += quantity;
+			Batches.Add(new Batch(quantity, expDate));
 		}
 
-		public bool RemoveStock(int quantity)
+
+		public int GetCurrentInventory()
 		{
-			if (quantity <= 0)
+			int total = 0;
+
+			foreach (Batch batch in Batches)
 			{
-				return false;
+				total += batch.Quantity;
 			}
 
-			if (quantity > CurrentInv)
-			{
-				return false;
-			}
-
-			CurrentInv -= quantity;
-			return true;
-
+			return total;
 		}
-
 
 
 	}
