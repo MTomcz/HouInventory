@@ -171,7 +171,7 @@ public class Menu
 
     private void PauseScreen()
     {
-        Console.WriteLine("\nTryk på en vilkårlig tast for at fortsætte...");
+        Console.WriteLine("Tryk på en vilkårlig tast for at fortsætte...");
 
         Console.ReadKey();
     }
