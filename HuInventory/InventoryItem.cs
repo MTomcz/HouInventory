@@ -48,6 +48,52 @@ namespace HuInventory
 			return total;
 		}
 
+		public bool RemoveStock(int quantity)
+		{
+			if (quantity <= 0)
+			{
+				return false;
+			}
+
+			if (quantity > GetCurrentInventory())
+			{
+				return false;
+			}
+
+			int remove = quantity;
+
+			foreach (Batch batch in Batches)
+			{
+				if (remove == 0)
+				{
+					break;
+				}
+
+				if (batch.Quantity >= remove)
+				{
+					batch.Quantity = batch.Quantity - remove;
+
+					remove = 0;
+				}
+				else
+				{
+					remove = remove - batch.Quantity;
+
+					batch.Quantity = 0;
+				}
+			}
+
+			for (int i = Batches.Count - 1; i >= 0; i--)
+			{
+				if (Batches[i].Quantity == 0)
+				{
+					Batches.RemoveAt(i);
+				}
+			}
+
+			return true;
+		}
+
 
 	}
 }
