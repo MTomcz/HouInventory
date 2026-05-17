@@ -1,10 +1,16 @@
-﻿namespace HuInventory
+﻿while (true)
 {
-    internal class Program
+    LoginAuthenticator authservice =
+        new LoginAuthenticator();
+
+    bool loggedIn =
+        authservice.ShowLoginMenu();
+
+    if (loggedIn)
     {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("Hello, World!");
-        }
+        Menu menu =
+            new Menu(authservice.CurrentUser);
+
+        menu.ShowMainMenu();
     }
 }
