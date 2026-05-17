@@ -1,12 +1,24 @@
 ﻿using System;
+using System.Net.Http.Headers;
+using System.Runtime.ExceptionServices;
+using HuInventory;
 
 public class Menu
 {
+
+
     private User currentUser;
     private bool running = true;
+    private Inventory inventory = new Inventory();
+
+
+
+
     public Menu( User user)
     {
         currentUser = user;
+
+        inventory.LoadInventory();
     }
 
     public void ShowMainMenu()
@@ -108,34 +120,108 @@ public class Menu
         }
     }
 
-    private void ShowInventory()
-    {
-        Console.Clear();
+	private void ShowInventory()
+	{
+		Console.Clear();
 
-        Console.WriteLine("Alle varer vises her...");
+		foreach (InventoryItem item in inventory.items)
+		{
+			Console.WriteLine($"{item.Name} | Antal: {item.GetCurrentInventory()}antal/kg");
 
-        PauseScreen();
-    }
+			foreach (Batch batch in item.Batches)
+			{
+				Console.WriteLine(
+					$"{batch.Quantity} kg udløber {batch.ExpDate.ToShortDateString()}"
+				);
+			}
 
-    private void AddItem()
+			if (item.GetCurrentInventory() < item.MinInv)
+			{
+				Console.WriteLine("Varen er under minimumsbeholdning");
+			}
+
+			Console.WriteLine();
+		}
+
+		PauseScreen();
+	}
+
+	private void AddItem()
     {
         Console.Clear();
 
         Console.WriteLine("Tilføj vare");
 
+        Console.WriteLine("indtast navn på vare; ");
+        string name = Console.ReadLine();
+
+        Console.WriteLine("vælg kategori");
+        Console.WriteLine("1. tørre vare");
+        Console.WriteLine("2. frossen vare");
+        string cat = Console.ReadLine();
+
+        InventoryItem.Category category;
+
+        if (cat == "1")
+        {
+            category = InventoryItem.Category.Dryfoods;
+        }
+
+        else
+        {
+            category = InventoryItem.Category.Frozenfoods;
+        }
+
+        Console.WriteLine("Hvor meget af det (kun numre):");
+        int quantity = int.Parse(Console.ReadLine());
+
+        Console.WriteLine("Hvad er minimumsantal af varen:");
+        int minInv = int.Parse(Console.ReadLine());
+
+        Console.WriteLine("Hvad er udløbsdatoen (yyyy-mm-dd):");
+        DateTime expDate = DateTime.Parse(Console.ReadLine());
+
+        inventory.AddItem(name, category, quantity, minInv, expDate);
+
+
         PauseScreen();
     }
 
-    private void RemoveItem()
-    {
-        Console.Clear();
+	private void RemoveItem()
+	{
+		Console.Clear();
 
-        Console.WriteLine("Fjern vare");
+		Console.WriteLine("Vælg vare(tast 1, 2, 3, etc):");
 
-        PauseScreen();
-    }
+		// Show all items
+		for (int i = 0; i < inventory.items.Count; i++)
+		{
+			Console.WriteLine($"{i + 1}. {inventory.items[i].Name}");
+		}
 
-    private void ShowOrderList()
+		int choice = int.Parse(Console.ReadLine());
+
+
+		InventoryItem selectedItem = inventory.items[choice - 1];
+
+		Console.Write("Hvor meget har i taget: ");
+		int quantity = int.Parse(Console.ReadLine());
+
+		bool yay = inventory.RemoveItem(selectedItem.Name, quantity);
+
+		if (yay)
+		{
+			Console.WriteLine("lagerindhold opdateret");
+		}
+		else
+		{
+			Console.WriteLine("Det var ikke muligt at opdatere lager.");
+		}
+
+		PauseScreen();
+	}
+
+	private void ShowOrderList()
     {
         Console.Clear();
 
