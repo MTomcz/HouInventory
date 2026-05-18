@@ -2,7 +2,7 @@
 
 namespace HuInventory
 {
-    internal class StockTransaction
+    internal class SystemLog
     {
         public string Username { get; set; }
         public DateTime Timestamp { get; set; }
@@ -10,7 +10,7 @@ namespace HuInventory
         public string ItemName { get; set; }
         public int Quantity { get; set; }
 
-        public StockTransaction(string username, string transactionType, string itemName = "", int quantity = 0)
+        public SystemLog(string username, string transactionType, string itemName = "", int quantity = 0)
         {
             Username = username;
             Timestamp = DateTime.Now;
