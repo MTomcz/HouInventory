@@ -193,7 +193,7 @@ public class Menu
 
 		Console.WriteLine("Vælg vare(tast 1, 2, 3, etc):");
 
-		// Show all items
+
 		for (int i = 0; i < inventory.items.Count; i++)
 		{
 			Console.WriteLine($"{i + 1}. {inventory.items[i].Name}");
