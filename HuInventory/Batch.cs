@@ -8,7 +8,10 @@ namespace HuInventory
 	{
 		public int Quantity { get; set; }
 		public DateTime ExpDate { get; set; }
+		public Batch()
+		{
 
+		}
 
 
 

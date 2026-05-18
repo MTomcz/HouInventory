@@ -18,6 +18,11 @@ namespace HuInventory
 
 		public List<Batch> Batches { get; set; } = new List<Batch>();
 
+		public InventoryItem()
+		{
+
+		}
+
 
 		public InventoryItem(string name, Category category, int minInv)
 		{

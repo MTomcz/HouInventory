@@ -17,6 +17,11 @@ namespace HuInventory
 
         public List<InventoryItem> items = new List<InventoryItem>();
 
+		public Inventory()
+		{
+			LoadInventory();
+		}
+
         public void AddItem(string name, InventoryItem.Category category, int quantity, int minInv, DateTime expDate)
         {
             bool alrExist = false;
@@ -28,6 +33,7 @@ namespace HuInventory
                 if (item.Name == name)
                 {
                     item.AddStock(quantity, expDate);
+					SaveInventory();
 
                     alrExist = true;
                     break;
@@ -45,6 +51,7 @@ namespace HuInventory
                 newItem.AddStock(quantity, expDate);
 
                 items.Add(newItem);
+				SaveInventory();
 
             }
 
@@ -57,7 +64,9 @@ namespace HuInventory
 			{
 				if (item.Name == name)
 				{
-					return item.RemoveStock(quantity);
+					bool removed = item.RemoveStock(quantity);
+					SaveInventory();
+					return removed;
 				}
 			}
 
