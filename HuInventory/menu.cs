@@ -177,17 +177,24 @@ public class Menu
 
 			InventoryItem.Category category;
 
-			if (cat == "1")
-			{
-				category = InventoryItem.Category.Dryfoods;
-			}
+            if (cat == "1")
+            {
+                category = InventoryItem.Category.Dryfoods;
+            }
 
-			else
-			{
-				category = InventoryItem.Category.Frozenfoods;
-			}
+            else if (cat == "2")
+            {
+                category = InventoryItem.Category.Frozenfoods;
+            }
 
-			Console.WriteLine("Hvor meget af det (kun numre):");
+            else
+            {
+                Console.WriteLine("Skriv kun 1 eller 2");
+                PauseScreen();
+                return;
+            }
+
+            Console.WriteLine("Hvor meget af det (kun numre):");
 			if (!int.TryParse(Console.ReadLine(), out int quantity) || quantity <= 0)
 			{
 				Console.WriteLine("Ugyldigt antal. Skal være et positivt tal.");
