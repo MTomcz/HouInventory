@@ -75,41 +75,29 @@ namespace HuInventory
 
 		public void SaveInventory()
 		{
-			try
-			{
-				string invJson = JsonSerializer.Serialize(items, new JsonSerializerOptions { WriteIndented = true });   // Serialize the transactions list to JSON with indentation for readability
-                File.WriteAllText(filePath, invJson);
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine($"Fejl ved gemning af lager: {ex.Message}");
-			}
+
+			string invJson = JsonSerializer.Serialize(items, new JsonSerializerOptions { WriteIndented = true });   // Serialize the inventory list to JSON with indentation for readability
+
+            File.WriteAllText(filePath, invJson);
+
 		}
 
 		public void LoadInventory()
 		{
-			try
+			if (File.Exists(filePath))
 			{
-				if (File.Exists(filePath))
+				string invJson = File.ReadAllText(filePath);
+
+				var loaded = JsonSerializer.Deserialize<List<InventoryItem>>(invJson);
+
+				if (loaded != null)
 				{
-					string invJson = File.ReadAllText(filePath);
-
-					var loaded = JsonSerializer.Deserialize<List<InventoryItem>>(invJson);
-
-					if (loaded != null)
-					{
-						items = loaded;
-					}
-					else
-					{
-						items = new List<InventoryItem>();
-					}
+					items = loaded;
 				}
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine($"Fejl ved indlæsning af lager: {ex.Message}");
-				items = new List<InventoryItem>();
+				else
+				{
+					items = new List<InventoryItem>();
+				}
 			}
 		}
 

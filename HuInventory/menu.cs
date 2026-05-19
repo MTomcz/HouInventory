@@ -154,133 +154,78 @@ public class Menu
 
 	private void AddItem()
 	{
-		try
+		Console.Clear();
+
+		Console.WriteLine("Tilføj vare");
+
+		Console.WriteLine("indtast navn på vare; ");
+		string name = Console.ReadLine();
+
+		Console.WriteLine("vælg kategori");
+		Console.WriteLine("1. tørre vare");
+		Console.WriteLine("2. frossen vare");
+		string cat = Console.ReadLine();
+
+		InventoryItem.Category category;
+
+		if (cat == "1")
 		{
-			Console.Clear();
-
-			Console.WriteLine("Tilføj vare");
-
-			Console.WriteLine("indtast navn på vare; ");
-			string name = Console.ReadLine();
-
-			if (string.IsNullOrWhiteSpace(name))
-			{
-				Console.WriteLine("Varenavn kan ikke være tomt.");
-				PauseScreen();
-				return;
-			}
-
-			Console.WriteLine("vælg kategori");
-			Console.WriteLine("1. tørre vare");
-			Console.WriteLine("2. frossen vare");
-			string cat = Console.ReadLine();
-
-			InventoryItem.Category category;
-
-			if (cat == "1")
-			{
-				category = InventoryItem.Category.Dryfoods;
-			}
-
-			else
-			{
-				category = InventoryItem.Category.Frozenfoods;
-			}
-
-			Console.WriteLine("Hvor meget af det (kun numre):");
-			if (!int.TryParse(Console.ReadLine(), out int quantity) || quantity <= 0)
-			{
-				Console.WriteLine("Ugyldigt antal. Skal være et positivt tal.");
-				PauseScreen();
-				return;
-			}
-
-			Console.WriteLine("Hvad er minimumsantal af varen:");
-			if (!int.TryParse(Console.ReadLine(), out int minInv) || minInv < 0)
-			{
-				Console.WriteLine("Ugyldigt minimumsantal. Skal være 0 eller højere.");
-				PauseScreen();
-				return;
-			}
-
-			Console.WriteLine("Hvad er udløbsdatoen (yyyy-mm-dd):");
-			if (!DateTime.TryParse(Console.ReadLine(), out DateTime expDate))
-			{
-				Console.WriteLine("Ugyldig dato. Brug formatet yyyy-mm-dd.");
-				PauseScreen();
-				return;
-			}
-
-			inventory.AddItem(name, category, quantity, minInv, expDate);
-			systemChanges.LogTransaction(currentUser.Username, "AddStock", name, quantity);
-
-			Console.WriteLine("Vare tilføjet succesfuldt!");
-			PauseScreen();
+			category = InventoryItem.Category.Dryfoods;
 		}
-		catch (Exception ex)
+
+		else
 		{
-			Console.WriteLine($"Fejl: {ex.Message}");
-			PauseScreen();
+			category = InventoryItem.Category.Frozenfoods;
 		}
+
+		Console.WriteLine("Hvor meget af det (kun numre):");
+		int quantity = int.Parse(Console.ReadLine());
+
+		Console.WriteLine("Hvad er minimumsantal af varen:");
+		int minInv = int.Parse(Console.ReadLine());
+
+		Console.WriteLine("Hvad er udløbsdatoen (yyyy-mm-dd):");
+		DateTime expDate = DateTime.Parse(Console.ReadLine());
+
+		inventory.AddItem(name, category, quantity, minInv, expDate);
+		systemChanges.LogTransaction(currentUser.Username, "AddStock", name, quantity);
+
+		PauseScreen();
 	}
 
 	private void RemoveItem()
 	{
-		try
+		Console.Clear();
+
+		Console.WriteLine("Vælg vare(tast 1, 2, 3, etc):");
+
+
+		for (int i = 0; i < inventory.items.Count; i++)
 		{
-			Console.Clear();
-
-			Console.WriteLine("Vælg vare(tast 1, 2, 3, etc):");
-
-			// Show all items
-			for (int i = 0; i < inventory.items.Count; i++)
-			{
-				Console.WriteLine($"{i + 1}. {inventory.items[i].Name}");
-			}
-
-			if (inventory.items.Count == 0)
-			{
-				Console.WriteLine("Der er ingen varer i lageret.");
-				PauseScreen();
-				return;
-			}
-
-			if (!int.TryParse(Console.ReadLine(), out int choice) || choice < 1 || choice > inventory.items.Count)
-			{
-				Console.WriteLine("Ugyldigt valg.");
-				PauseScreen();
-				return;
-			}
-
-			InventoryItem selectedItem = inventory.items[choice - 1];
-
-			Console.Write("Hvor meget har i taget: ");
-			if (!int.TryParse(Console.ReadLine(), out int quantity) || quantity <= 0)
-			{
-				Console.WriteLine("Ugyldigt antal. Skal være et positivt tal.");
-				PauseScreen();
-				return;
-			}
-
-			bool yay = inventory.RemoveItem(selectedItem.Name, quantity);
-
-			if (yay)
-			{
-				Console.WriteLine("lagerindhold er opdateret");
-				systemChanges.LogTransaction(currentUser.Username, "RemoveStock", selectedItem.Name, quantity);
-			}
-			else
-			{
-				Console.WriteLine("Det var ikke muligt at opdatere lager.");
-			}
-
-			PauseScreen();
+			Console.WriteLine($"{i + 1}. {inventory.items[i].Name}");
 		}
-		catch (Exception ex)
+
+		int choice = int.Parse(Console.ReadLine());
+
+
+		InventoryItem selectedItem = inventory.items[choice - 1];
+
+		Console.Write("Hvor meget har i taget: ");
+		int quantity = int.Parse(Console.ReadLine());
+
+		bool yay = inventory.RemoveItem(selectedItem.Name, quantity);
+
+		if (yay)
 		{
-			Console.WriteLine($"Fejl: {ex.Message}");
-			PauseScreen();
+			Console.WriteLine("lagerindhold er opdateret");
+			systemChanges.LogTransaction(currentUser.Username, "RemoveStock", selectedItem.Name, quantity);
 		}
+		else
+		{
+			Console.WriteLine("Det var ikke muligt at opdatere lager.");
+		}
+
+		PauseScreen();
 	}
 
 	private void ShowOrderList()

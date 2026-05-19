@@ -120,9 +120,8 @@ public class LoginAuthenticator
 
                 case "3":
 
-                    Console.WriteLine("Programmet afsluttes...");
-                    Environment.Exit(0);
                     running = false;
+
                     break;
 
                 default:
@@ -140,38 +139,21 @@ public class LoginAuthenticator
 
     private void SaveUsers()
     {
-        try
-        {
-            string json = JsonSerializer.Serialize(users);
-            File.WriteAllText(filePath, json);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"\nFejl ved gemning af brugere: {ex.Message}");
-            Console.ReadKey();
-        }
+        string json =
+            JsonSerializer.Serialize(users);
+
+        File.WriteAllText(filePath, json);
     }
 
     private void LoadUsers()
     {
-        try
+        if (File.Exists(filePath))
         {
-            if (File.Exists(filePath))
-            {
-                string json = File.ReadAllText(filePath);
-                users = JsonSerializer.Deserialize<List<User>>(json);
+            string json =
+                File.ReadAllText(filePath);
 
-                if (users == null)
-                {
-                    users = new List<User>();
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"\nFejl ved indlæsning af brugere: {ex.Message}");
-            users = new List<User>();
-            Console.ReadKey();
+            users =
+                JsonSerializer.Deserialize<List<User>>(json);
         }
     }
 }
