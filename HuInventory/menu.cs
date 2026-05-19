@@ -10,7 +10,7 @@ public class Menu
     private User currentUser;
     private bool running = true;
     private Inventory inventory = new Inventory();
-
+    private SystemChanges systemChanges = new SystemChanges();
 
 
 
@@ -19,6 +19,7 @@ public class Menu
         currentUser = user;
 
         inventory.LoadInventory();
+        systemChanges.LogTransaction(user.Username, "Login");
     }
 
     public void ShowMainMenu()
@@ -154,45 +155,45 @@ public class Menu
 	}
 
 	private void AddItem()
-    {
-        Console.Clear();
+	{
+		Console.Clear();
 
-        Console.WriteLine("Tilføj vare");
+		Console.WriteLine("Tilføj vare");
 
-        Console.WriteLine("indtast navn på vare; ");
-        string name = Console.ReadLine();
+		Console.WriteLine("indtast navn på vare; ");
+		string name = Console.ReadLine();
 
-        Console.WriteLine("vælg kategori");
-        Console.WriteLine("1. Tør vare");
-        Console.WriteLine("2. Frost vare");
-        string cat = Console.ReadLine();
+		Console.WriteLine("vælg kategori");
+		Console.WriteLine("1. tørre vare");
+		Console.WriteLine("2. frossen vare");
+		string cat = Console.ReadLine();
 
-        InventoryItem.Category category;
+		InventoryItem.Category category;
 
-        if (cat == "1")
-        {
-            category = InventoryItem.Category.Dryfoods;
-        }
+		if (cat == "1")
+		{
+			category = InventoryItem.Category.Dryfoods;
+		}
 
-        else
-        {
-            category = InventoryItem.Category.Frozenfoods;
-        }
+		else
+		{
+			category = InventoryItem.Category.Frozenfoods;
+		}
 
-        Console.WriteLine("Hvor meget af det (kun numre):");
-        int quantity = int.Parse(Console.ReadLine());
+		Console.WriteLine("Hvor meget af det (kun numre):");
+		int quantity = int.Parse(Console.ReadLine());
 
-        Console.WriteLine("Hvad er minimumsantal af varen:");
-        int minInv = int.Parse(Console.ReadLine());
+		Console.WriteLine("Hvad er minimumsantal af varen:");
+		int minInv = int.Parse(Console.ReadLine());
 
-        Console.WriteLine("Hvad er udløbsdatoen (yyyy-mm-dd):");
-        DateTime expDate = DateTime.Parse(Console.ReadLine());
+		Console.WriteLine("Hvad er udløbsdatoen (yyyy-mm-dd):");
+		DateTime expDate = DateTime.Parse(Console.ReadLine());
 
-        inventory.AddItem(name, category, quantity, minInv, expDate);
+		inventory.AddItem(name, category, quantity, minInv, expDate);
+		systemChanges.LogTransaction(currentUser.Username, "AddStock", name, quantity);
 
-
-        PauseScreen();
-    }
+		PauseScreen();
+	}
 
 	private void RemoveItem()
 	{
@@ -219,6 +220,7 @@ public class Menu
 		if (yay)
 		{
 			Console.WriteLine("lagerindhold opdateret");
+			systemChanges.LogTransaction(currentUser.Username, "RemoveStock", selectedItem.Name, quantity);
 		}
 		else
 		{
@@ -263,15 +265,138 @@ public class Menu
 
     private void ShowSystemChanges()
     {
+        bool changesMenuRunning = true;
+
+        while (changesMenuRunning)
+        {
+            Console.Clear();
+
+            Console.WriteLine("=================================");
+            Console.WriteLine("      SYSTEMÆNDRINGER - FILTER");
+            Console.WriteLine("=================================");
+            Console.WriteLine("1. Se alle ændringer");
+            Console.WriteLine("2. Filtrer efter bruger");
+            Console.WriteLine("3. Filtrer efter type");
+            Console.WriteLine("4. Filtrer efter dato");
+            Console.WriteLine("5. Søg efter vare");
+            Console.WriteLine("6. Tilbage");
+            Console.WriteLine("=================================");
+
+            string choice = Console.ReadKey().KeyChar.ToString();
+
+            Console.WriteLine();
+
+            switch (choice)
+            {
+                case "1":
+                    systemChanges.DisplayAllChanges();
+                    break;
+
+                case "2":
+                    FilterByUsername();
+                    break;
+
+                case "3":
+                    FilterByTransactionType();
+                    break;
+
+                case "4":
+                    FilterByDateRange();
+                    break;
+
+                case "5":
+                    SearchByItemName();
+                    break;
+
+                case "6":
+                    changesMenuRunning = false;
+                    break;
+
+                default:
+                    Console.WriteLine("Ugyldigt valg.");
+                    PauseScreen();
+                    break;
+            }
+        }
+    }
+
+    private void FilterByUsername()
+    {
         Console.Clear();
+        Console.WriteLine("Indtast brugernavn:");
+        string username = Console.ReadLine();
 
-        Console.WriteLine("Systemændringer vises her");
+        var filtered = systemChanges.FilterByUsername(username);
+        systemChanges.DisplayFilteredChanges(filtered);
+    }
 
-        PauseScreen();
+    private void FilterByTransactionType()
+    {
+        Console.Clear();
+        Console.WriteLine("=================================");
+        Console.WriteLine("Vælg transaktionstype:");
+        Console.WriteLine("=================================");
+        Console.WriteLine("1. Login");
+        Console.WriteLine("2. Logout");
+        Console.WriteLine("3. AddStock");
+        Console.WriteLine("4. RemoveStock");
+        Console.WriteLine("=================================");
+
+        string choice = Console.ReadKey().KeyChar.ToString();
+        string transactionType = "";
+
+        switch (choice)
+        {
+            case "1":
+                transactionType = "Login";
+                break;
+            case "2":
+                transactionType = "Logout";
+                break;
+            case "3":
+                transactionType = "AddStock";
+                break;
+            case "4":
+                transactionType = "RemoveStock";
+                break;
+            default:
+                Console.WriteLine("Ugyldigt valg.");
+                PauseScreen();
+                return;
+        }
+
+        var filtered = systemChanges.FilterByTransactionType(transactionType);
+        systemChanges.DisplayFilteredChanges(filtered);
+    }
+
+    private void FilterByDateRange()
+    {
+        Console.Clear();
+        Console.WriteLine("Filtrer efter dato");
+
+        Console.WriteLine("Indtast startdato (yyyy-mm-dd):");
+        DateTime startDate = DateTime.Parse(Console.ReadLine());
+
+        Console.WriteLine("Indtast slutdato (yyyy-mm-dd):");
+        DateTime endDate = DateTime.Parse(Console.ReadLine());
+
+        var filtered = systemChanges.FilterByDateRange(startDate, endDate);
+        systemChanges.DisplayFilteredChanges(filtered);
+    }
+
+    private void SearchByItemName()
+    {
+        Console.Clear();
+        Console.WriteLine("Søg efter vare:");
+        string itemName = Console.ReadLine();
+
+        var filtered = systemChanges.SearchByItemName(itemName);
+        systemChanges.DisplayFilteredChanges(filtered);
     }
 
     private void Logout()
     {
+        systemChanges.LogTransaction(currentUser.Username, "Logout");
         Console.WriteLine("Logger ud...");
 
         PauseScreen();
