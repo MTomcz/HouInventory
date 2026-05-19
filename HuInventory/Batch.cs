@@ -10,6 +10,12 @@ namespace HuInventory
 		public DateTime ExpDate { get; set; }
 
 
+		public Batch()
+		{
+
+		}
+
+
 		public Batch(int quantity, DateTime expDate)
 		{
 			Quantity = quantity;

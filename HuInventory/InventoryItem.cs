@@ -12,6 +12,12 @@ namespace HuInventory
 			Frozenfoods,
 
 		}
+
+		public InventoryItem()
+		{
+
+		}
+
 		public string Name { get; set; }
 		public Category ItemCategory { get; set; }
 		public int MinInv { get; set; }
