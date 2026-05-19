@@ -24,17 +24,32 @@ public class SystemChanges
 
     public void SaveChanges()
     {
-        string json = JsonSerializer.Serialize(transactions, new JsonSerializerOptions { WriteIndented = true }); // Serialize the transactions list to JSON with indentation for readability
-        File.WriteAllText(filePath, json);
+        try
+        {
+            string json = JsonSerializer.Serialize(transactions, new JsonSerializerOptions { WriteIndented = true });   // Serialize the transactions list to JSON with indentation for readability
+            File.WriteAllText(filePath, json);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Fejl ved gemning af systemændringer: {ex.Message}");
+        }
     }
 
     public void LoadChanges()
     {
-        if (File.Exists(filePath))
+        try
         {
-            string json = File.ReadAllText(filePath);
-            var loaded = JsonSerializer.Deserialize<List<SystemLog>>(json);
-            transactions = loaded ?? new List<SystemLog>();
+            if (File.Exists(filePath))
+            {
+                string json = File.ReadAllText(filePath);
+                var loaded = JsonSerializer.Deserialize<List<SystemLog>>(json);
+                transactions = loaded ?? new List<SystemLog>();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Fejl ved indlæsning af systemændringer: {ex.Message}");
+            transactions = new List<SystemLog>();
         }
     }
 
