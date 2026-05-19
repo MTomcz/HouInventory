@@ -306,16 +306,14 @@ public class Menu
         }
         else
         {
+            foreach (InventoryItem item in lowStockItems)
             {
-                foreach (InventoryItem item in lowStockItems)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"ADVARSEL! {item.Name} | " + $"Nuværende: {item.GetCurrentInventory()} | " + $"Minimum: {item.MinInv}");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"ADVARSEL! {item.Name} | " + $"Nuværende: {item.GetCurrentInventory()} | " + $"Minimum: {item.MinInv}");
 
 
-                    Console.ResetColor();
+                Console.ResetColor();
 
-                }
             }
         }
 
@@ -435,10 +433,22 @@ public class Menu
         Console.WriteLine("Filtrer efter dato");
 
         Console.WriteLine("Indtast startdato (yyyy-mm-dd):");
-        DateTime startDate = DateTime.Parse(Console.ReadLine());
+        DateTime startDate;
+        if (!DateTime.TryParse(Console.ReadLine(), out startDate))
+        {
+            Console.WriteLine("Ugyldig dato. Brug formatet yyyy-mm-dd.");
+            PauseScreen();
+            return;
+        }
 
         Console.WriteLine("Indtast slutdato (yyyy-mm-dd):");
-        DateTime endDate = DateTime.Parse(Console.ReadLine());
+        DateTime endDate;
+        if (!DateTime.TryParse(Console.ReadLine(), out endDate))
+        {
+            Console.WriteLine("Ugyldig dato. Brug formatet yyyy-mm-dd.");
+            PauseScreen();
+            return;
+        }
 
         var filtered = systemChanges.FilterByDateRange(startDate, endDate);
         systemChanges.DisplayFilteredChanges(filtered);
@@ -464,6 +474,8 @@ public class Menu
 
     private void ExitProgram()
     {
+        systemChanges.LogTransaction(currentUser.Username, "Logout");
+        inventory.SaveInventory();
         Console.WriteLine("Programmet afsluttes");
 
         running = false;
