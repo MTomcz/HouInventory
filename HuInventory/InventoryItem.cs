@@ -12,17 +12,17 @@ namespace HuInventory
 			Frozenfoods,
 
 		}
-		public string Name { get; set; }
-		public Category ItemCategory { get; set; }
-		public int MinInv { get; set; }
-
-		public List<Batch> Batches { get; set; } = new List<Batch>();
 
 		public InventoryItem()
 		{
 
 		}
 
+		public string Name { get; set; }
+		public Category ItemCategory { get; set; }
+		public int MinInv { get; set; }
+
+		public List<Batch> Batches { get; set; } = new List<Batch>();
 
 		public InventoryItem(string name, Category category, int minInv)
 		{

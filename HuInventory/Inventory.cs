@@ -30,7 +30,7 @@ namespace HuInventory
             foreach (InventoryItem item in items)
             {
 
-                if (item.Name == name)
+                if (item.Name.ToLower() == name.ToLower())
                 {
                     item.AddStock(quantity, expDate);
 					SaveInventory();
@@ -62,7 +62,7 @@ namespace HuInventory
 		{
 			foreach (InventoryItem item in items)
 			{
-				if (item.Name == name)
+				if (item.Name.ToLower() == name.ToLower())
 				{
 					bool removed = item.RemoveStock(quantity);
 					SaveInventory();

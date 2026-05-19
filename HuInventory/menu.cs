@@ -132,9 +132,7 @@ public class Menu
 
             foreach (Batch batch in item.Batches)
 			{
-				Console.WriteLine(
-					$"{batch.Quantity} kg udløber {batch.ExpDate.ToShortDateString()}"
-				);
+				Console.WriteLine($"{batch.Quantity} kg udløber {batch.ExpDate.ToShortDateString()}");
 			}
 
             if (item.GetCurrentInventory() <= item.MinInv)
@@ -424,14 +422,41 @@ public class Menu
 
     private void FilterByDateRange()
     {
+
+
+
         Console.Clear();
         Console.WriteLine("Filtrer efter dato");
 
         Console.WriteLine("Indtast startdato (yyyy-mm-dd):");
-        DateTime startDate = DateTime.Parse(Console.ReadLine());
+        DateTime startDate;
+
+        try
+        {
+            startDate = DateTime.Parse(Console.ReadLine());
+        }
+        catch
+        {
+			Console.WriteLine("Dato er skrevet i forkert format. Prøv igen med yyyy-mm-dd");
+            PauseScreen() ;
+            return;
+        }
+
 
         Console.WriteLine("Indtast slutdato (yyyy-mm-dd):");
-        DateTime endDate = DateTime.Parse(Console.ReadLine());
+        DateTime endDate;
+
+		try
+		{
+			endDate = DateTime.Parse(Console.ReadLine());
+		}
+		catch
+		{
+			Console.WriteLine("Dato er skrevet i forkert format. Prøv igen med yyyy-mm-dd");
+			PauseScreen();
+			return;
+		}
+
 
         var filtered = systemChanges.FilterByDateRange(startDate, endDate);
         systemChanges.DisplayFilteredChanges(filtered);
@@ -456,7 +481,9 @@ public class Menu
     }
 
     private void ExitProgram()
-    {
+    { 
+        
+        inventory.SaveInventory();
         Console.WriteLine("Programmet afsluttes");
 
         running = false;
