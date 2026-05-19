@@ -17,10 +17,10 @@ namespace HuInventory
 
         public List<InventoryItem> items = new List<InventoryItem>();
 
-		public Inventory()
-		{
-			LoadInventory();
-		}
+        public Inventory()
+        {
+            LoadInventory();
+        }
 
         public void AddItem(string name, InventoryItem.Category category, int quantity, int minInv, DateTime expDate)
         {
@@ -30,16 +30,16 @@ namespace HuInventory
             foreach (InventoryItem item in items)
             {
 
-                if (item.Name.ToLower() == name.ToLower())
+                if (item.Name == name)
                 {
                     item.AddStock(quantity, expDate);
-					SaveInventory();
+                    SaveInventory();
 
                     alrExist = true;
                     break;
 
                 }
-         
+
 
             }
 
@@ -51,83 +51,83 @@ namespace HuInventory
                 newItem.AddStock(quantity, expDate);
 
                 items.Add(newItem);
-				SaveInventory();
+                SaveInventory();
 
             }
 
 
-	    }
+        }
 
-		public bool RemoveItem(string name, int quantity)
-		{
-			foreach (InventoryItem item in items)
-			{
-				if (item.Name.ToLower() == name.ToLower())
-				{
-					bool removed = item.RemoveStock(quantity);
-					SaveInventory();
-					return removed;
-				}
-			}
+        public bool RemoveItem(string name, int quantity)
+        {
+            foreach (InventoryItem item in items)
+            {
+                if (item.Name == name)
+                {
+                    bool removed = item.RemoveStock(quantity);
+                    SaveInventory();
+                    return removed;
+                }
+            }
 
-			return false;
-		}
+            return false;
+        }
 
-		public void SaveInventory()
-		{
-			try
-			{
-				string invJson = JsonSerializer.Serialize(items, new JsonSerializerOptions { WriteIndented = true });   // Serialize the transactions list to JSON with indentation for readability
+        public void SaveInventory()
+        {
+            try
+            {
+                string invJson = JsonSerializer.Serialize(items, new JsonSerializerOptions { WriteIndented = true });   // Serialize the transactions list to JSON with indentation for readability
                 File.WriteAllText(filePath, invJson);
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine($"Fejl ved gemning af lager: {ex.Message}");
-			}
-		}
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Fejl ved gemning af lager: {ex.Message}");
+            }
+        }
 
-		public void LoadInventory()
-		{
-			try
-			{
-				if (File.Exists(filePath))
-				{
-					string invJson = File.ReadAllText(filePath);
+        public void LoadInventory()
+        {
+            try
+            {
+                if (File.Exists(filePath))
+                {
+                    string invJson = File.ReadAllText(filePath);
 
-					var loaded = JsonSerializer.Deserialize<List<InventoryItem>>(invJson);
+                    var loaded = JsonSerializer.Deserialize<List<InventoryItem>>(invJson);
 
-					if (loaded != null)
-					{
-						items = loaded;
-					}
-					else
-					{
-						items = new List<InventoryItem>();
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine($"Fejl ved indlæsning af lager: {ex.Message}");
-				items = new List<InventoryItem>();
-			}
-		}
+                    if (loaded != null)
+                    {
+                        items = loaded;
+                    }
+                    else
+                    {
+                        items = new List<InventoryItem>();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Fejl ved indlæsning af lager: {ex.Message}");
+                items = new List<InventoryItem>();
+            }
+        }
 
-		public List<InventoryItem> GetLowStockItems()
-		{
-			List<InventoryItem> lowStockitems = new List<InventoryItem>();
+        public List<InventoryItem> GetLowStockItems()
+        {
+            List<InventoryItem> lowStockitems = new List<InventoryItem>();
 
-			foreach (InventoryItem item in items)
-			{
-				if (item.GetCurrentInventory() <= item.MinInv)
-				{
-					lowStockitems.Add(item);
+            foreach (InventoryItem item in items)
+            {
+                if (item.GetCurrentInventory() <= item.MinInv)
+                {
+                    lowStockitems.Add(item);
 
-				}
-			}
-			return lowStockitems;
-		}
+                }
+            }
+            return lowStockitems;
+        }
 
-	}
+    }
 
 }
