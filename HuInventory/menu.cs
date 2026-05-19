@@ -132,9 +132,7 @@ public class Menu
 
             foreach (Batch batch in item.Batches)
 			{
-				Console.WriteLine(
-					$"{batch.Quantity} kg udløber {batch.ExpDate.ToShortDateString()}"
-				);
+				Console.WriteLine($"{batch.Quantity} kg udløber {batch.ExpDate.ToShortDateString()}");
 			}
 
             if (item.GetCurrentInventory() <= item.MinInv)
@@ -179,13 +177,49 @@ public class Menu
 		}
 
 		Console.WriteLine("Hvor meget af det (kun numre):");
-		int quantity = int.Parse(Console.ReadLine());
+        int quantity = 0;
+        
+        try
+        {
+            quantity = int.Parse(Console.ReadLine());
+        }
+        catch
+        {
+            Console.WriteLine("skriv kun tal");
+            PauseScreen();
+            return;
+        }
 
 		Console.WriteLine("Hvad er minimumsantal af varen:");
-		int minInv = int.Parse(Console.ReadLine());
+        int minInv = 0;
+
+        try
+        {
+            minInv = int.Parse(Console.ReadLine());
+        }
+		catch
+		{
+			Console.WriteLine("skriv kun tal");
+			PauseScreen();
+            return;
+		}
 
 		Console.WriteLine("Hvad er udløbsdatoen (yyyy-mm-dd):");
-		DateTime expDate = DateTime.Parse(Console.ReadLine());
+        DateTime expDate;
+
+        try
+        {
+            expDate = DateTime.Parse(Console.ReadLine());
+        }
+        catch
+        {
+			Console.WriteLine("Det er blevet skrevet i forkert format. Prøv igen med yyyy-mm-dd");
+            PauseScreen();
+            return;
+
+        }
+
+
 
 		inventory.AddItem(name, category, quantity, minInv, expDate);
 		systemChanges.LogTransaction(currentUser.Username, "AddStock", name, quantity);
@@ -205,13 +239,45 @@ public class Menu
 			Console.WriteLine($"{i + 1}. {inventory.items[i].Name}");
 		}
 
-		int choice = int.Parse(Console.ReadLine());
+        int choice = 0;
+
+        try
+        {
+        choice = int.Parse(Console.ReadLine());
+        }
+        catch
+        {
+			Console.WriteLine("Skriv kun nr");
+            PauseScreen();
+            return;
+        }
+
+        if (choice < 1 || choice > inventory.items.Count)
+        {
+			Console.WriteLine("Du har prøvet at vælge et nr der ikke eksistere. Prøv igen");
+            PauseScreen();
+            return;
+        }
 
 
 		InventoryItem selectedItem = inventory.items[choice - 1];
 
 		Console.Write("Hvor meget har i taget: ");
-		int quantity = int.Parse(Console.ReadLine());
+        
+        int quantity = 0;
+
+        try
+        {
+            quantity = int.Parse(Console.ReadLine());
+        }
+        catch
+        {
+			Console.WriteLine("skriv kun tal");
+            PauseScreen() ; 
+            return;
+
+        }
+        
 
 		bool yay = inventory.RemoveItem(selectedItem.Name, quantity);
 
@@ -369,10 +435,21 @@ public class Menu
 
     private void FilterByDateRange()
     {
+
+
+
         Console.Clear();
         Console.WriteLine("Filtrer efter dato");
 
         Console.WriteLine("Indtast startdato (yyyy-mm-dd):");
+        DateTime startDate;
+
+        try
+        {
+
+        }
+
+
         DateTime startDate = DateTime.Parse(Console.ReadLine());
 
         Console.WriteLine("Indtast slutdato (yyyy-mm-dd):");
