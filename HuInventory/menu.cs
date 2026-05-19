@@ -171,10 +171,17 @@ public class Menu
 			category = InventoryItem.Category.Dryfoods;
 		}
 
-		else
-		{
+		else if (cat == "2") 
+        {
 			category = InventoryItem.Category.Frozenfoods;
 		}
+
+        else
+        {
+            Console.WriteLine("skriv kun 1 eller 2, tak");
+            PauseScreen();
+            return;
+        }
 
 		Console.WriteLine("Hvor meget af det (kun numre):");
         int quantity = 0;
@@ -446,14 +453,30 @@ public class Menu
 
         try
         {
-
+            startDate = DateTime.Parse(Console.ReadLine());
+        }
+        catch
+        {
+			Console.WriteLine("Dato er skrevet i forkert format. Prøv igen med yyyy-mm-dd");
+            PauseScreen() ;
+            return;
         }
 
 
-        DateTime startDate = DateTime.Parse(Console.ReadLine());
-
         Console.WriteLine("Indtast slutdato (yyyy-mm-dd):");
-        DateTime endDate = DateTime.Parse(Console.ReadLine());
+        DateTime endDate;
+
+		try
+		{
+			endDate = DateTime.Parse(Console.ReadLine());
+		}
+		catch
+		{
+			Console.WriteLine("Dato er skrevet i forkert format. Prøv igen med yyyy-mm-dd");
+			PauseScreen();
+			return;
+		}
+
 
         var filtered = systemChanges.FilterByDateRange(startDate, endDate);
         systemChanges.DisplayFilteredChanges(filtered);
@@ -478,7 +501,9 @@ public class Menu
     }
 
     private void ExitProgram()
-    {
+    { 
+        
+        inventory.SaveInventory();
         Console.WriteLine("Programmet afsluttes");
 
         running = false;
