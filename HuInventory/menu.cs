@@ -10,7 +10,7 @@ public class Menu
     private User currentUser;
     private bool running = true;
     private Inventory inventory = new Inventory();
-
+    private SystemChanges systemChanges = new SystemChanges();
 
 
 
@@ -19,6 +19,7 @@ public class Menu
         currentUser = user;
 
         inventory.LoadInventory();
+        systemChanges.LogTransaction(user.Username, "Login");
     }
 
     public void ShowMainMenu()
@@ -147,45 +148,45 @@ public class Menu
 	}
 
 	private void AddItem()
-    {
-        Console.Clear();
+	{
+		Console.Clear();
 
-        Console.WriteLine("Tilføj vare");
+		Console.WriteLine("Tilføj vare");
 
-        Console.WriteLine("indtast navn på vare; ");
-        string name = Console.ReadLine();
+		Console.WriteLine("indtast navn på vare; ");
+		string name = Console.ReadLine();
 
-        Console.WriteLine("vælg kategori");
-        Console.WriteLine("1. tørre vare");
-        Console.WriteLine("2. frossen vare");
-        string cat = Console.ReadLine();
+		Console.WriteLine("vælg kategori");
+		Console.WriteLine("1. tørre vare");
+		Console.WriteLine("2. frossen vare");
+		string cat = Console.ReadLine();
 
-        InventoryItem.Category category;
+		InventoryItem.Category category;
 
-        if (cat == "1")
-        {
-            category = InventoryItem.Category.Dryfoods;
-        }
+		if (cat == "1")
+		{
+			category = InventoryItem.Category.Dryfoods;
+		}
 
-        else
-        {
-            category = InventoryItem.Category.Frozenfoods;
-        }
+		else
+		{
+			category = InventoryItem.Category.Frozenfoods;
+		}
 
-        Console.WriteLine("Hvor meget af det (kun numre):");
-        int quantity = int.Parse(Console.ReadLine());
+		Console.WriteLine("Hvor meget af det (kun numre):");
+		int quantity = int.Parse(Console.ReadLine());
 
-        Console.WriteLine("Hvad er minimumsantal af varen:");
-        int minInv = int.Parse(Console.ReadLine());
+		Console.WriteLine("Hvad er minimumsantal af varen:");
+		int minInv = int.Parse(Console.ReadLine());
 
-        Console.WriteLine("Hvad er udløbsdatoen (yyyy-mm-dd):");
-        DateTime expDate = DateTime.Parse(Console.ReadLine());
+		Console.WriteLine("Hvad er udløbsdatoen (yyyy-mm-dd):");
+		DateTime expDate = DateTime.Parse(Console.ReadLine());
 
-        inventory.AddItem(name, category, quantity, minInv, expDate);
+		inventory.AddItem(name, category, quantity, minInv, expDate);
+		systemChanges.LogTransaction(currentUser.Username, "AddStock", name, quantity);
 
-
-        PauseScreen();
-    }
+		PauseScreen();
+	}
 
 	private void RemoveItem()
 	{
@@ -212,6 +213,7 @@ public class Menu
 		if (yay)
 		{
 			Console.WriteLine("lagerindhold opdateret");
+			systemChanges.LogTransaction(currentUser.Username, "RemoveStock", selectedItem.Name, quantity);
 		}
 		else
 		{
@@ -237,10 +239,12 @@ public class Menu
         Console.WriteLine("Systemændringer vises her");
 
         PauseScreen();
+        systemChanges.DisplayAllChanges();
     }
 
     private void Logout()
     {
+        systemChanges.LogTransaction(currentUser.Username, "Logout");
         Console.WriteLine("Logger ud...");
 
         PauseScreen();

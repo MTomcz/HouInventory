@@ -2,7 +2,7 @@
 
 namespace HuInventory
 {
-    internal class SystemLog
+    public class SystemLog
     {
         public string Username { get; set; }
         public DateTime Timestamp { get; set; }
