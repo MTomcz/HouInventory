@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using System.Linq;
 using HuInventory;
 
 public class SystemChanges
@@ -42,18 +43,44 @@ public class SystemChanges
         return transactions;
     }
 
+    // Filter methods
+    public List<SystemLog> FilterByUsername(string username)
+    {
+        return transactions.Where(t => t.Username.Equals(username, StringComparison.OrdinalIgnoreCase)).ToList();
+    }
+
+    public List<SystemLog> FilterByTransactionType(string transactionType)
+    {
+        return transactions.Where(t => t.TransactionType.Equals(transactionType, StringComparison.OrdinalIgnoreCase)).ToList();
+    }
+
+    public List<SystemLog> FilterByDateRange(DateTime startDate, DateTime endDate)
+    {
+        return transactions.Where(t => t.Timestamp.Date >= startDate.Date && t.Timestamp.Date <= endDate.Date).ToList();
+    }
+
+    public List<SystemLog> SearchByItemName(string itemName)
+    {
+        return transactions.Where(t => !string.IsNullOrEmpty(t.ItemName) && t.ItemName.Contains(itemName, StringComparison.OrdinalIgnoreCase)).ToList();
+    }
+
     public void DisplayAllChanges()
+    {
+        DisplayFilteredChanges(transactions);
+    }
+
+    public void DisplayFilteredChanges(List<SystemLog> logs)
     {
         Console.Clear();
         Console.WriteLine("========== SYSTEMÆNDRINGER ==========\n");
 
-        if (transactions.Count == 0)
+        if (logs.Count == 0)
         {
             Console.WriteLine("Ingen ændringer registreret.");
         }
         else
         {
-            foreach (var transaction in transactions)
+            foreach (var transaction in logs)
             {
                 Console.WriteLine($"Bruger: {transaction.Username}");
                 Console.WriteLine($"Tidspunkt: {transaction.Timestamp:dd/MM/yyyy HH:mm:ss}");

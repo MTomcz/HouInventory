@@ -234,12 +234,133 @@ public class Menu
 
     private void ShowSystemChanges()
     {
+        bool changesMenuRunning = true;
+
+        while (changesMenuRunning)
+        {
+            Console.Clear();
+
+            Console.WriteLine("=================================");
+            Console.WriteLine("      SYSTEMÆNDRINGER - FILTER");
+            Console.WriteLine("=================================");
+            Console.WriteLine("1. Se alle ændringer");
+            Console.WriteLine("2. Filtrer efter bruger");
+            Console.WriteLine("3. Filtrer efter type");
+            Console.WriteLine("4. Filtrer efter dato");
+            Console.WriteLine("5. Søg efter vare");
+            Console.WriteLine("6. Tilbage");
+            Console.WriteLine("=================================");
+
+            string choice = Console.ReadKey().KeyChar.ToString();
+
+            Console.WriteLine();
+
+            switch (choice)
+            {
+                case "1":
+                    systemChanges.DisplayAllChanges();
+                    break;
+
+                case "2":
+                    FilterByUsername();
+                    break;
+
+                case "3":
+                    FilterByTransactionType();
+                    break;
+
+                case "4":
+                    FilterByDateRange();
+                    break;
+
+                case "5":
+                    SearchByItemName();
+                    break;
+
+                case "6":
+                    changesMenuRunning = false;
+                    break;
+
+                default:
+                    Console.WriteLine("Ugyldigt valg.");
+                    PauseScreen();
+                    break;
+            }
+        }
+    }
+
+    private void FilterByUsername()
+    {
         Console.Clear();
+        Console.WriteLine("Indtast brugernavn:");
+        string username = Console.ReadLine();
 
-        Console.WriteLine("Systemændringer vises her");
+        var filtered = systemChanges.FilterByUsername(username);
+        systemChanges.DisplayFilteredChanges(filtered);
+    }
 
-        PauseScreen();
-        systemChanges.DisplayAllChanges();
+    private void FilterByTransactionType()
+    {
+        Console.Clear();
+        Console.WriteLine("=================================");
+        Console.WriteLine("Vælg transaktionstype:");
+        Console.WriteLine("=================================");
+        Console.WriteLine("1. Login");
+        Console.WriteLine("2. Logout");
+        Console.WriteLine("3. AddStock");
+        Console.WriteLine("4. RemoveStock");
+        Console.WriteLine("=================================");
+
+        string choice = Console.ReadKey().KeyChar.ToString();
+        string transactionType = "";
+
+        switch (choice)
+        {
+            case "1":
+                transactionType = "Login";
+                break;
+            case "2":
+                transactionType = "Logout";
+                break;
+            case "3":
+                transactionType = "AddStock";
+                break;
+            case "4":
+                transactionType = "RemoveStock";
+                break;
+            default:
+                Console.WriteLine("Ugyldigt valg.");
+                PauseScreen();
+                return;
+        }
+
+        var filtered = systemChanges.FilterByTransactionType(transactionType);
+        systemChanges.DisplayFilteredChanges(filtered);
+    }
+
+    private void FilterByDateRange()
+    {
+        Console.Clear();
+        Console.WriteLine("Filtrer efter dato");
+
+        Console.WriteLine("Indtast startdato (yyyy-mm-dd):");
+        DateTime startDate = DateTime.Parse(Console.ReadLine());
+
+        Console.WriteLine("Indtast slutdato (yyyy-mm-dd):");
+        DateTime endDate = DateTime.Parse(Console.ReadLine());
+
+        var filtered = systemChanges.FilterByDateRange(startDate, endDate);
+        systemChanges.DisplayFilteredChanges(filtered);
+    }
+
+    private void SearchByItemName()
+    {
+        Console.Clear();
+        Console.WriteLine("Søg efter vare:");
+        string itemName = Console.ReadLine();
+
+        var filtered = systemChanges.SearchByItemName(itemName);
+        systemChanges.DisplayFilteredChanges(filtered);
     }
 
     private void Logout()
