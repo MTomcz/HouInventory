@@ -127,9 +127,7 @@ public class Menu
 
 		foreach (InventoryItem item in inventory.items)
 		{
-            Console.WriteLine($"{item.Name} | " +
-                              $"Kategori: {item.ItemCategory} | " +
-                              $"Antal: {item.GetCurrentInventory()} antal/kg");
+            Console.WriteLine($"{item.Name} | " + $"Kategori: {item.ItemCategory} | " + $"Antal: {item.GetCurrentInventory()} antal/kg");
   
 
             foreach (Batch batch in item.Batches)
@@ -219,7 +217,7 @@ public class Menu
 
 		if (yay)
 		{
-			Console.WriteLine("lagerindhold opdateret");
+			Console.WriteLine("lagerindhold er opdateret");
 			systemChanges.LogTransaction(currentUser.Username, "RemoveStock", selectedItem.Name, quantity);
 		}
 		else
@@ -250,9 +248,9 @@ public class Menu
                 foreach (InventoryItem item in lowStockItems)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"ADVARSEL! {item.Name} | " +
-                                      $"Nuværende: {item.GetCurrentInventory()} | " +
-                                      $"Minimum: {item.MinInv}");
+                    Console.WriteLine($"ADVARSEL! {item.Name} | " + $"Nuværende: {item.GetCurrentInventory()} | " + $"Minimum: {item.MinInv}");
+
+
                     Console.ResetColor();
 
                 }
