@@ -101,6 +101,25 @@ namespace HuInventory
 			}
 		}
 
+		public List<InventoryItem> GetLowStockItems()
+		{
+			List<InventoryItem> lowStockitems = new List<InventoryItem>();
+            
+			foreach (InventoryItem item in items)
+			{
+				if (item.GetCurrentInventory() <= item.MinInv)
+				{
+					lowStockitems.Add(item);
+
+				}
+			}
+			return lowStockitems;
+            {
+                
+            }
+
+        }
+
 	}
 
 }

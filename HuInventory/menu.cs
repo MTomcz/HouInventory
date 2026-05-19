@@ -127,21 +127,28 @@ public class Menu
 
 		foreach (InventoryItem item in inventory.items)
 		{
-			Console.WriteLine($"{item.Name} | Antal: {item.GetCurrentInventory()}antal/kg");
+            Console.WriteLine($"{item.Name} | " +
+                              $"Kategori: {item.ItemCategory} | " +
+                              $"Antal: {item.GetCurrentInventory()} antal/kg");
+  
 
-			foreach (Batch batch in item.Batches)
+            foreach (Batch batch in item.Batches)
 			{
 				Console.WriteLine(
 					$"{batch.Quantity} kg udløber {batch.ExpDate.ToShortDateString()}"
 				);
 			}
 
-			if (item.GetCurrentInventory() < item.MinInv)
-			{
-				Console.WriteLine("Varen er under minimumsbeholdning");
-			}
+            if (item.GetCurrentInventory() <= item.MinInv)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
 
-			Console.WriteLine();
+                Console.WriteLine("ADVARSEL! Varen er under minimumsbeholdning");
+
+                Console.ResetColor();
+            }
+
+            Console.WriteLine();
 		}
 
 		PauseScreen();
@@ -227,9 +234,33 @@ public class Menu
     {
         Console.Clear();
 
-        Console.WriteLine("Bestillingsliste vises her");
+        Console.WriteLine("=================================");
+        Console.WriteLine("        BESTILLINGSLISTE");
+        Console.WriteLine("=================================");
 
-        PauseScreen();
+        List<InventoryItem> lowStockItems = inventory.GetLowStockItems();
+
+        if (lowStockItems.Count == 0)
+        {
+            Console.WriteLine(" Ingen varer mangler.");
+        }
+        else
+        {
+            {
+                foreach (InventoryItem item in lowStockItems)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"ADVARSEL! {item.Name} | " +
+                                      $"Nuværende: {item.GetCurrentInventory()} | " +
+                                      $"Minimum: {item.MinInv}");
+                    Console.ResetColor();
+
+                }
+            }
+        }
+
+
+            PauseScreen();
     }
 
     private void ShowSystemChanges()
