@@ -24,7 +24,7 @@ public class SystemChanges
 
     public void SaveChanges()
     {
-        string json = JsonSerializer.Serialize(transactions, new JsonSerializerOptions { WriteIndented = true });
+        string json = JsonSerializer.Serialize(transactions, new JsonSerializerOptions { WriteIndented = true }); // Serialize the transactions list to JSON with indentation for readability
         File.WriteAllText(filePath, json);
     }
 

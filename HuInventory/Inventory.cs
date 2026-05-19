@@ -73,14 +73,14 @@ namespace HuInventory
 			return false;
 		}
 
-        public void SaveInventory()
-        {
+		public void SaveInventory()
+		{
 
-            string invJson = JsonSerializer.Serialize(items);
+			string invJson = JsonSerializer.Serialize(items, new JsonSerializerOptions { WriteIndented = true });   // Serialize the inventory list to JSON with indentation for readability
 
             File.WriteAllText(filePath, invJson);
 
-        }
+		}
 
 		public void LoadInventory()
 		{
@@ -104,7 +104,7 @@ namespace HuInventory
 		public List<InventoryItem> GetLowStockItems()
 		{
 			List<InventoryItem> lowStockitems = new List<InventoryItem>();
-            
+
 			foreach (InventoryItem item in items)
 			{
 				if (item.GetCurrentInventory() <= item.MinInv)
@@ -114,11 +114,7 @@ namespace HuInventory
 				}
 			}
 			return lowStockitems;
-            {
-                
-            }
-
-        }
+		}
 
 	}
 
