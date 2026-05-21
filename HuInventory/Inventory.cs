@@ -15,6 +15,7 @@ namespace HuInventory
 
         private string filePath = "inventory.json";
 
+        //list of all all inventoryitems
         public List<InventoryItem> items = new List<InventoryItem>();
 
         public Inventory()
@@ -26,7 +27,7 @@ namespace HuInventory
         {
             bool alrExist = false;
 
-
+            //if item exist, add new batch
             foreach (InventoryItem item in items)
             {
 
@@ -42,7 +43,8 @@ namespace HuInventory
 
 
             }
-
+            
+            //if it doesnt exist, creates new inventory item
             if (!alrExist)
             {
                 InventoryItem newItem = new InventoryItem(name, category, minInv);
@@ -58,6 +60,7 @@ namespace HuInventory
 
         }
 
+        //remove stock from item
         public bool RemoveItem(string name, int quantity)
         {
             foreach (InventoryItem item in items)
@@ -73,6 +76,7 @@ namespace HuInventory
             return false;
         }
 
+        //save inventory to JSON
         public void SaveInventory()
         {
             try
@@ -86,6 +90,7 @@ namespace HuInventory
             }
         }
 
+        //loads saved inventory from file
         public void LoadInventory()
         {
             try
@@ -113,6 +118,7 @@ namespace HuInventory
             }
         }
 
+        //list of items that are under minimum inventory
         public List<InventoryItem> GetLowStockItems()
         {
             List<InventoryItem> lowStockitems = new List<InventoryItem>();
